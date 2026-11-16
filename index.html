@@ -89,6 +89,25 @@ body {
 	text-align: center;
 	z-index: 1;
 }
+		
+#status-hint {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: max(1rem, env(safe-area-inset-top));
+	margin: 0 auto;
+	width: min(88%, 26rem);
+	display: none;
+	color: #2e3350;
+	background-color: rgba(255, 255, 255, 0.72);
+	border-radius: 0.6rem;
+	padding: 0.7rem 0.9rem;
+	font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	text-align: center;
+	word-break: keep-all;
+}
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
@@ -111,6 +130,32 @@ body {
 		<div id="status">
 			<img id="status-splash" class="show-image--true fullsize--false use-filter--true" src="index.png" alt="">
 			<progress id="status-progress"></progress>
+			<div id="status-hint">처음 열 때는 준비하는 데 <b>1~2분</b>쯤 걸려요.<br>화면이 멈춘 것 같아도 창을 닫지 말고 기다려 주세요.<br>「페이지 응답 없음」 창이 뜨면 <b>기다리기</b>를 눌러 주세요.<br><small>한 번 열고 나면 다음부터는 금방 열려요.</small></div>
+			<script>
+(function () {
+	// WebGL 이 Direct3D 로 그려지는지 (윈도우의 ANGLE) — 알 수 없으면 윈도우인지로 판단
+	let d3d = /Windows/.test(navigator.userAgent);
+	try {
+		const gl = document.createElement('canvas').getContext('webgl2');
+		if (gl) {
+			const ext = gl.getExtension('WEBGL_debug_renderer_info');
+			const r = String(gl.getParameter(ext ? ext.UNMASKED_RENDERER_WEBGL : gl.RENDERER) || '');
+			if (/Direct3D|D3D/i.test(r)) {
+				d3d = true;
+			} else if (/OpenGL|Vulkan|Metal|Apple|Mali|Adreno|PowerVR/i.test(r)) {
+				d3d = false;
+			}
+			const lose = gl.getExtension('WEBGL_lose_context');
+			if (lose) {
+				lose.loseContext();
+			}
+		}
+	} catch (e) { /* 모르면 위 판단 그대로 */ }
+	if (d3d) {
+		document.getElementById('status-hint').style.display = 'block';
+	}
+}());
+			</script>
 			<div id="status-notice"></div>
 		</div>
 
