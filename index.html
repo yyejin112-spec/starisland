@@ -159,9 +159,38 @@ body {
 			<div id="status-notice"></div>
 		</div>
 
+		<script>
+(function () {
+	// 거를지는 '프레임'마다 정한다 (같은 프레임의 콜백은 시각 t 가 같다) — 콜백마다 번갈아 정하면
+	// 한 프레임에 콜백이 여럿일 때 엔진 콜백만 계속 걸러져 게임이 멈춘다.
+	// 지난번 돌린 프레임에서 30ms 가 안 지났을 때만 거른다 → 원래 30fps 가 안 나오는 느린 기기는 기다림이 늘지 않고,
+	// 120Hz 화면도 30fps 로 맞는다
+	const raf = window.requestAnimationFrame.bind(window);
+	let curT = -1;
+	let lastRun = -1e9;
+	let skip = false;
+	window.__fpsHalf = false;
+	window.requestAnimationFrame = function (cb) {
+		return raf(function (t) {
+			if (t !== curT) {
+				curT = t;
+				skip = window.__fpsHalf && t - lastRun < 30;
+				if (!skip) {
+					lastRun = t;
+				}
+			}
+			if (skip) {
+				window.requestAnimationFrame(cb);
+				return;
+			}
+			cb(t);
+		});
+	};
+}());
+		</script>
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":10264572,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":10268604,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

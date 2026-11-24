@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1795500947|13812427';
+const CACHE_VERSION = '1795506210|12788330';
 /** @type {string} */
 const CACHE_PREFIX = '별빛섬 키우기-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
